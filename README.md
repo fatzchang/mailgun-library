@@ -1,17 +1,24 @@
-# simple tool to send & validate mail (mailgun account required)
+# mailgun-library
 
+## Description
+sending/validating email via [Mailgun](https://www.mailgun.com/)
 
-**usage:**
+## usage
+```php
+$mailgun = new Mailgun([
+    'domain' => 'example.com',
+    'privateKey' => 'mailgun_private_key',
+    'publicKey' => 'mailgun_public_key',
+    'sender' => 'name of sender',
+    'service' => 'email of sender'
+]);
+```
+### send email:
+```php
+$result = $mailgun->send($mail, $subject, $content);
+```
 
-first:   
-fill the blank;
-
-then:  
-$mailgun = new Mailgun();
-
-**send mail:**  
-$mailgun->send($mail, $subject, $content);
-
-**validate mail:**  
-$mailgun->validate($mail);
-
+### validate email:
+```php
+$result = $mailgun->validate($mail);
+```

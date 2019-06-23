@@ -3,18 +3,27 @@
 class Mailgun
 {
     private $mailgunServer = 'https://api.mailgun.net/v3';
-    private $domain        = '';
-    private $privateKey    = '';
-    private $publicKey     = '';
-    private $sender        = '';
-    private $service       = '';
+    private $domain = '';
+    private $privateKey = '';
+    private $publicKey = '';
+    private $sender = '';
+    private $service = '';
 
     private $defaults = [
-        'o:tracking'        => 'yes',
+        'o:tracking' => 'yes',
         'o:tracking-clicks' => 'yes',
-        'o:tracking-opens'  => 'yes',
-        'o:tag'             => '',
+        'o:tracking-opens' => 'yes',
+        'o:tag' => '',
     ];
+
+    public function __construct($config)
+    {
+        $this->domain = $config['domain'];
+        $this->privateKey = $config['privateKey'];
+        $this->publicKey = $config['publicKey'];
+        $this->sender = $config['sender'];
+        $this->service = $config['service'];
+    }
 
     /**
      * send mail
@@ -24,22 +33,16 @@ class Mailgun
     {
         $from = $this->sender . '<' . $this->service . '>';
         $data = [
-            'from'       => $from,
-            'to'         => $to,
-            'subject'    => $subject,
-            'html'       => $html,
+            'from' => $from,
+            'to' => $to,
+            'subject' => $subject,
+            'html' => $html,
             'h:Reply-To' => $from,
         ];
 
         $data = array_merge([], $data, $this->defaults, $option);
 
-        // use in dev mode if needed
-        // if (isDev()) {
-        //     $data['to']      = '';
-        //     $data['subject'] = $data['subject'];
-        // }
-
-        $url      = $this->mailgunServer . '/' . $this->domain . '/messages';
+        $url = $this->mailgunServer . '/' . $this->domain . '/messages';
         $response = $this->request($url, $data, [], $this->privateKey);
         return $response;
     }
@@ -53,7 +56,7 @@ class Mailgun
         $data = array(
             'address' => $to,
         );
-        $url      = $this->mailgunServer . '/address/validate?' . http_build_query($data);
+        $url = $this->mailgunServer . '/address/validate?' . http_build_query($data);
         $response = $this->request($url, [], [], $this->publicKey);
         return $response;
     }
@@ -91,10 +94,10 @@ class Mailgun
             curl_setopt($curl, CURLOPT_USERPWD, 'api:' . $key);
         }
 
-        $response    = curl_exec($curl);
+        $response = curl_exec($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $header      = substr($response, 0, $header_size);
-        $body        = substr($response, $header_size);
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
 
         curl_close($curl);
 
